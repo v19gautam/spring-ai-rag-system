@@ -13,6 +13,9 @@ import java.util.Map;
 public class FixedSizeChunker {
 
     public List<Chunk> chunk(IngestedDocument ingestedDocument, int chunkSize) {
+        return chunk(ingestedDocument, chunkSize, 0);
+    }
+    public List<Chunk> chunk(IngestedDocument ingestedDocument, int chunkSize, int overlap) {
         List<Chunk> chunks = new ArrayList<>();
         String content = ingestedDocument.getContent();
         int start = 0, chunkIndex = 0;
@@ -26,7 +29,11 @@ public class FixedSizeChunker {
                     metadata,
                     chunkIndex++);
             chunks.add(chunk);
-            start += chunkSize;
+            if (start + chunkSize - overlap < content.length()) {
+                start += chunkSize - overlap;
+            } else {
+                start += chunkSize;
+            }
         }
         return chunks;
     }

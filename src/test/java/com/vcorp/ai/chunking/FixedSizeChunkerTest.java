@@ -26,7 +26,16 @@ public class FixedSizeChunkerTest {
         List<IngestedDocument> ingestedDocuments = ingestionOrchestrator.ingestAll();
         IngestedDocument ingestedDocument = ingestedDocuments.get(0);
 
+        LOGGER.info("-------------NO OVERLAP------------");
         List<Chunk> chunks = chunker.chunk(ingestedDocument, 500);
+        printChunks(ingestedDocument, chunks);
+
+        LOGGER.info("-------------OVERLAP 100 Characters------------");
+        List<Chunk> overlapChunks = chunker.chunk(ingestedDocument, 500, 100);
+        printChunks(ingestedDocument, overlapChunks);
+    }
+
+    private static void printChunks(IngestedDocument ingestedDocument, List<Chunk> chunks) {
         LOGGER.info("-------------");
         LOGGER.info("Source: {}", ingestedDocument.getSource());
         LOGGER.info("Original length: {}", ingestedDocument.getContent().length());
