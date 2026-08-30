@@ -26,12 +26,12 @@ public class WikiIngestionService {
     }
 
     private IngestedDocument ingestSingleFile(File wikiFile) throws IOException {
-        LOGGER.info("Ingesting file: " + wikiFile.getName());
+//        LOGGER.info("Ingesting file: " + wikiFile.getName());
 
         String content = Files.readString(wikiFile.toPath());
 
-        LOGGER.info("File content: " + wikiFile.getName());
-        LOGGER.info(content);
+//        LOGGER.info("File content: " + wikiFile.getName());
+//        LOGGER.info(content);
 
         return new IngestedDocument("WIKI", content, Map.of("fileName", wikiFile.getName()));
     }

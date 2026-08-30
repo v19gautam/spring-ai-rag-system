@@ -31,9 +31,9 @@ public class DatabaseIngestionService {
 
         List<IngestedDocument> ingestedDocuments = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            logger.info("--------------FAQ-------------");
-            logger.info("Question: " + row.get("question"));
-            logger.info("Answer: " + row.get("answer"));
+//            logger.info("--------------FAQ-------------");
+//            logger.info("Question: " + row.get("question"));
+//            logger.info("Answer: " + row.get("answer"));
 
             String content = "Question: " + row.get("question") + "\n" + "Answer:" + row.get("answer");
             IngestedDocument ingestedDocument = new IngestedDocument(
@@ -56,9 +56,9 @@ public class DatabaseIngestionService {
 
         List<IngestedDocument> ingestedDocuments = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            logger.info("--------------Release Notes-------------");
-            logger.info("Version: " + row.get("version"));
-            logger.info("Description: " + row.get("summary"));
+//            logger.info("--------------Release Notes-------------");
+//            logger.info("Version: " + row.get("version"));
+//            logger.info("Description: " + row.get("summary"));
 
             String content = "Version: " + row.get("version") + "\n"
                     + "Summary: " + row.get("summary") + "\n"
@@ -82,8 +82,8 @@ public class DatabaseIngestionService {
 
         List<IngestedDocument> ingestedDocuments = new ArrayList<>();
         for (Map<String, Object> row : rows) {
-            logger.info("--------------Announcements-------------");
-            logger.info("Title: " + row.get("subject"));
+//            logger.info("--------------Announcements-------------");
+//            logger.info("Title: " + row.get("subject"));
 
             String content = "Subject: " + row.get("subject") + "\n"
                     + "Body: " + row.get("body");
