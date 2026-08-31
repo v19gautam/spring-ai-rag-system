@@ -1,5 +1,6 @@
-package com.vcorp.ai.chunking.model;
+package com.vcorp.ai.chunking;
 
+import com.vcorp.ai.chunking.model.Chunk;
 import com.vcorp.ai.ingestion.model.IngestedDocument;
 import org.springframework.stereotype.Service;
 
