@@ -1,5 +1,6 @@
-package com.vcorp.ai.chunking;
+package com.vcorp.ai.vectorstore;
 
+import com.vcorp.ai.chunking.ChunkingOrchestrator;
 import com.vcorp.ai.chunking.model.Chunk;
 import com.vcorp.ai.ingestion.IngestionOrchestrator;
 import com.vcorp.ai.ingestion.model.IngestedDocument;
@@ -8,34 +9,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-public class ChunkingOrchestratorTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChunkingOrchestratorTest.class);
+@ActiveProfiles("test")
+public class VectorStoreServiceTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(VectorStoreServiceTest.class);
 
     @Autowired
-    IngestionOrchestrator ingestionOrchestrator;
+    private IngestionOrchestrator ingestionOrchestrator;
 
     @Autowired
     private ChunkingOrchestrator chunkingOrchestrator;
 
+    @Autowired
+    private ChunkVectorStoreService chunkVectorStoreService;
+
     @Test
-    public void testChunkingOrchestrator() throws Exception{
+    public void testStore() throws Exception{
         List<IngestedDocument> ingestedDocuments = ingestionOrchestrator.ingestAll();
+        List<Chunk> combinedChunks = new ArrayList<>();
+
         for (IngestedDocument ingestedDocument : ingestedDocuments) {
             List<Chunk> chunks = chunkingOrchestrator.chunk(ingestedDocument);
-
-            LOGGER.info("SOURCE: {}", ingestedDocument.getSource());
-            LOGGER.info("CHUNKS: {}", chunks.size());
-
-            for (Chunk chunk : chunks) {
-                LOGGER.info("CHUNK INDEX: {}", chunk.getChunkIndex());
-                LOGGER.info("METADATA: {}", chunk.getMetadata());
-                LOGGER.info("CONTENT: {}", chunk.getContent());
-            }
+            combinedChunks.addAll(chunks);
         }
+        chunkVectorStoreService.store(combinedChunks);
     }
 }

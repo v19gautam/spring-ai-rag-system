@@ -15,7 +15,7 @@ public class ChunkingOrchestrator {
     private final DatabaseChunker databaseChunker;
     private final PdfPragmaticChunker pdfPragmaticChunker;
 
-    public List<Chunk> chunkAll(IngestedDocument ingestedDocument) throws Exception {
+    public List<Chunk> chunk(IngestedDocument ingestedDocument) throws Exception {
         return switch (ingestedDocument.getSource()) {
             case "WIKI" -> wikiSemanticChunker.chunk(ingestedDocument);
             case "DB" -> databaseChunker.chunk(ingestedDocument);
