@@ -9,8 +9,11 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
@@ -26,20 +29,54 @@ public class RetrievalService {
     public RetrievalResult retrieve(String query) {
         log.info("Retrieving requested for query: {}", query);
 
-        //TODO: Implement retrieval logic
         SearchRequest searchRequest = SearchRequest.builder()
                 .query(query)
-                .topK(5)
+                .topK(10)
                 .build();
 
         List<Document> documents = vectorStore.similaritySearch(searchRequest);
         log.info("Retrieved {} documents", documents.size());
 
         List<Chunk> chunks = documents.stream()
+                .filter(this::isAllowedByMetadata)
                 .map(this::toChunk)
                 .toList();
 
         return new RetrievalResult(chunks);
+    }
+
+    private boolean isAllowedByMetadata(Document document) {
+        Map<String, Object> metadata = document.getMetadata();
+        String source = (String) metadata.get("source");
+        if(!source.equals("DB")) {
+            return true;
+        }
+
+        String table = (String) metadata.get("table");
+        return switch (table) {
+            case "announcements" -> isActiveAnnouncement(metadata);
+            case "faqs" -> isPublicFaq(metadata);
+//            case "release_notes" -> true; // Included in the default case
+            default -> true;
+        };
+
+    }
+
+    private boolean isActiveAnnouncement(Map<String, Object> metadata) {
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
+
+        String startDateStr = (String) metadata.get("effective_from");
+        String endDateStr = (String) metadata.get("effective_to");
+
+        LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+        LocalDate endDate = !endDateStr.isEmpty() ? LocalDate.parse(endDateStr, formatter) : today.plusDays(1);
+
+        return !today.isAfter(endDate) && !today.isBefore(startDate);
+    }
+
+    private boolean isPublicFaq(Map<String, Object> metadata) {
+        return !metadata.get("visibility").toString().equals("RESTRICTED");
     }
 
     private Chunk toChunk(Document document) {

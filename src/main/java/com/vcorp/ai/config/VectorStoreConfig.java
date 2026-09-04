@@ -45,9 +45,9 @@ class VectorStoreConfig {
                         RedisVectorStore.MetadataField.text("version"),
                         RedisVectorStore.MetadataField.text("releaseDate"),
                         RedisVectorStore.MetadataField.text("category"),
-                        RedisVectorStore.MetadataField.text("effectiveFrom"),
-                        RedisVectorStore.MetadataField.text("effectiveTo"),
-                        RedisVectorStore.MetadataField.text("soutceType")
+                        RedisVectorStore.MetadataField.text("effective_from"),
+                        RedisVectorStore.MetadataField.text("effective_to"),
+                        RedisVectorStore.MetadataField.text("source_type")
                 ).build();
     }
 
