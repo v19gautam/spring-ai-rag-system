@@ -43,7 +43,7 @@ class VectorStoreConfig {
                         RedisVectorStore.MetadataField.text("department"),
                         RedisVectorStore.MetadataField.text("visibility"),
                         RedisVectorStore.MetadataField.text("version"),
-                        RedisVectorStore.MetadataField.text("releaseDate"),
+                        RedisVectorStore.MetadataField.text("release_date"),
                         RedisVectorStore.MetadataField.text("category"),
                         RedisVectorStore.MetadataField.text("effective_from"),
                         RedisVectorStore.MetadataField.text("effective_to"),

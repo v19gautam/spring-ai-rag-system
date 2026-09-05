@@ -21,17 +21,19 @@ import java.util.Map;
 public class RetrievalService {
 
     private final VectorStore vectorStore;
+    private final ChunkRankingComparator chunkRankingComparator = new ChunkRankingComparator();
 
     public RetrievalService(@Qualifier("customVectorStore") VectorStore vectorStore) {
         this.vectorStore = vectorStore;
     }
 
     public RetrievalResult retrieve(String query) {
-        log.info("Retrieving requested for query: {}", query);
+        log.info("Retrieval requested for query: {}", query);
 
         SearchRequest searchRequest = SearchRequest.builder()
                 .query(query)
                 .topK(10)
+                .similarityThreshold(0.75)
                 .build();
 
         List<Document> documents = vectorStore.similaritySearch(searchRequest);
@@ -40,6 +42,7 @@ public class RetrievalService {
         List<Chunk> chunks = documents.stream()
                 .filter(this::isAllowedByMetadata)
                 .map(this::toChunk)
+                .sorted(chunkRankingComparator)
                 .toList();
 
         return new RetrievalResult(chunks);
