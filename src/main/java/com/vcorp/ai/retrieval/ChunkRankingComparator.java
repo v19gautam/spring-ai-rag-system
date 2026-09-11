@@ -46,7 +46,7 @@ public class ChunkRankingComparator implements Comparator<Chunk> {
         String table = metadata.get("table").toString();
 
         if (table.equals("release_notes")) {
-            return LocalDate.parse(chunk.getMetadata().get("releaseDate").toString(), formatter);
+            return LocalDate.parse(chunk.getMetadata().get("release_date").toString(), formatter);
         }
 
         if (table.equals("announcements")) {
