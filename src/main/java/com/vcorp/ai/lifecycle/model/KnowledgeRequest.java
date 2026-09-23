@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class KnowledgeRequest {
-    private final String sourceType;
+    private final SourceType sourceType;
     private final String name;
 }

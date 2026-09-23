@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -19,6 +16,11 @@ public class PdfIngestionService {
 
     public static final Logger log = org.slf4j.LoggerFactory.getLogger(PdfIngestionService.class);
     public static final String PDF_DIRECTORY = "data/pdfs";
+
+    public List<IngestedDocument> ingest(String fileName) throws Exception{
+        File pdfFile = new File(PDF_DIRECTORY + "/" + fileName);
+        return Collections.singletonList(ingestSinglePdf(pdfFile));
+    }
 
     public List<IngestedDocument> ingestPdfs() throws Exception{
         File[] pdfFiles = new File(PDF_DIRECTORY).listFiles();
@@ -39,7 +41,10 @@ public class PdfIngestionService {
 //            log.info("Extracted text from PDF: {}", pdfFile.getName());
 //            log.info(text);
 
-            return new IngestedDocument("PDF", text, Map.of("fileName", pdfFile.getName()));
+            return new IngestedDocument("PDF", text, Map.of(
+                    "fileName", pdfFile.getName(),
+                    "identity", "PDF#" + pdfFile.getName())
+            );
         }
     }
 }

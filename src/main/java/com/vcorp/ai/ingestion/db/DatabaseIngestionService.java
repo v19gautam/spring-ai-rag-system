@@ -17,6 +17,19 @@ public class DatabaseIngestionService {
     private static final Logger logger = Logger.getLogger(DatabaseIngestionService.class.getName());
     private final JdbcTemplate jdbcTemplate;
 
+    public List<IngestedDocument> ingest(String tableName) {
+        if (tableName.equals("faqs")) {
+            return ingestFaqs();
+        }
+        if (tableName.equals("release_notes")) {
+            return ingestReleaseNotes();
+        }
+        if (tableName.equals("announcements")) {
+            return ingestAnnouncements();
+        }
+        return new ArrayList<>();
+    }
+
     public List<IngestedDocument> ingestDatabaseContent() {
         List<IngestedDocument> ingestedDocuments = new ArrayList<>();
         ingestedDocuments.addAll(ingestFaqs());
@@ -40,6 +53,7 @@ public class DatabaseIngestionService {
                     "DB", content,
                     Map.of(
                             "table", "faqs",
+                            "identity", "DB#faqs",
                             "id", row.get("id"),
                             "department", row.get("department")!=null ? row.get("department") : "",
                             "visibility", row.get("visibility")!=null ? row.get("visibility") : ""
@@ -67,6 +81,7 @@ public class DatabaseIngestionService {
             IngestedDocument ingestedDocument = new IngestedDocument(
                     "DB", content,
                     Map.of("table", "release_notes",
+                            "identity", "DB#release_notes",
                             "id", row.get("id"),
                             "version", row.get("version")!=null ? row.get("version") : "",
                             "release_date", row.get("release_date") != null ? row.get("release_date") : ""
@@ -90,6 +105,7 @@ public class DatabaseIngestionService {
             IngestedDocument ingestedDocument = new IngestedDocument(
                     "DB", content,
                     Map.of("table", "announcements",
+                            "identity", "DB#announcements",
                             "id", row.get("id"),
                             "category", row.get("category")!=null ? row.get("category") : "",
                             "effective_from", row.get("effective_from") != null ? row.get("effective_from") : "",

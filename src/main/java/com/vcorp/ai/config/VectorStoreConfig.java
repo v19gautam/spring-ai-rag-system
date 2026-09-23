@@ -26,8 +26,8 @@ class VectorStoreConfig {
     public VectorStore redisVectorStore(RedisClient redisClient, EmbeddingModel embeddingModel) {
         return RedisVectorStore.builder(redisClient, embeddingModel)
                 .indexName("vcorp_index")
-                .initializeSchema(true)
                 .metadataFields(
+                        RedisVectorStore.MetadataField.tag("identity"),
                         RedisVectorStore.MetadataField.text("source"),
                         RedisVectorStore.MetadataField.numeric("chunkIndex"),
                         //PDF
@@ -48,7 +48,8 @@ class VectorStoreConfig {
                         RedisVectorStore.MetadataField.text("effective_from"),
                         RedisVectorStore.MetadataField.text("effective_to"),
                         RedisVectorStore.MetadataField.text("source_type")
-                ).build();
+                ).initializeSchema(true)
+                .build();
     }
 
     @Bean
