@@ -8,7 +8,7 @@ public class KnowledgeIdentity {
     public static String from(KnowledgeRequest request) {
 
         if(request.getSourceType().equals(SourceType.PDF)) {
-            return "PDF#" + request.getName();
+            return "PDF_" + request.getName();
         }
         if(request.getSourceType().equals(SourceType.WIKI)) {
             return "WIKI#" + request.getName();

@@ -2,6 +2,7 @@ package com.vcorp.ai.vectorstore;
 
 import com.vcorp.ai.chunking.model.Chunk;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -9,10 +10,15 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.JedisPooled;
+import redis.clients.jedis.search.Query;
+import redis.clients.jedis.search.SearchResult;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class ChunkVectorStoreService {
     private final VectorStore vectorStore;
@@ -47,23 +53,20 @@ public class ChunkVectorStoreService {
 
     public void deleteByIdentity(String identity){
         FilterExpressionBuilder filterBuilder = new FilterExpressionBuilder();
-//        String sanitizedIdentity = escapeRediSearchTag(identity);
-        Filter.Expression filter = filterBuilder.eq("identity", identity).build();
-//        String textFilter = String.format("identity == '%s'", identity);
-//        System.out.println("Executing Filter Expression: " + textFilter);
-//        System.out.println("Generated Filter Expression: " + sanitizedIdentity);
-        List<Document> existingDocs = vectorStore.similaritySearch(SearchRequest.builder()
+        String escapedIdentity = escapeRedisDelimiter(identity);
+        SearchRequest searchRequest = SearchRequest.builder()
                 .query(" ")
-                .filterExpression(filter)
-                .topK(1)
-                .build());
-        if (existingDocs.isEmpty()) {
-            vectorStore.delete(filter);
+                .filterExpression(filterBuilder.eq("identity", escapedIdentity).build())
+                .build();
+        List<Document> matchingDocuments = vectorStore.similaritySearch(searchRequest);
+        log.info("Found {} matching documents for identity {}", matchingDocuments.size(), identity);
+        if (!matchingDocuments.isEmpty()) {
+            vectorStore.delete(filterBuilder.eq("identity", escapedIdentity).build());
         }
     }
-    private String escapeRediSearchTag(String value) {
+    private String escapeRedisDelimiter(String value) {
         if (value == null) return "";
-        // Escapes special characters for RediSearch TAG queries
-        return value.replaceAll("([\\-\\_\\.\\/\\@\\:\\{\\}\\s])", "\\\\$1");
+        // Escapes special characters for RedisSearch TAG queries
+        return value.replaceAll("([\\-./@:{}\\s])", "_");
     }
 }

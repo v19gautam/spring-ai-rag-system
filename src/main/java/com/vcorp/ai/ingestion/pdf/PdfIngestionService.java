@@ -41,10 +41,17 @@ public class PdfIngestionService {
 //            log.info("Extracted text from PDF: {}", pdfFile.getName());
 //            log.info(text);
 
+            String identity = "PDF_" + escapeRedisDelimiter(pdfFile.getName());
             return new IngestedDocument("PDF", text, Map.of(
                     "fileName", pdfFile.getName(),
-                    "identity", "PDF#" + pdfFile.getName())
+                    "identity", identity)
             );
         }
+    }
+
+    private String escapeRedisDelimiter(String value) {
+        if (value == null) return "";
+        // Escapes special characters for RedisSearch TAG queries
+        return value.replaceAll("([\\-./@:{}\\s])", "_");
     }
 }
