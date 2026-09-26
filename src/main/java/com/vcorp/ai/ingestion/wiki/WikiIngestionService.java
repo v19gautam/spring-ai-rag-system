@@ -39,9 +39,10 @@ public class WikiIngestionService {
 //        LOGGER.info("File content: " + wikiFile.getName());
 //        LOGGER.info(content);
 
-        return new IngestedDocument("WIKI", content, Map.of(
+        IngestedDocument ingestedDocument = new IngestedDocument("WIKI", content, Map.of(
                 "fileName", wikiFile.getName(),
                 "identity", "WIKI#" + wikiFile.getName())
         );
+        return ingestedDocument;
     }
 }

@@ -29,6 +29,7 @@ public class WikiSemanticChunker {
             Map<String, Object> metadata = new HashMap<>();
             metadata.put("chunkIndex", chunkIndex);
             metadata.put("chunkType", "WIKI_SECTION");
+            metadata.putAll(document.getMetadata());
 
             Chunk chunk = new Chunk(
                     document.getSource(),
