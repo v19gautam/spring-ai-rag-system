@@ -17,10 +17,8 @@ class VectorStoreConfig {
     @Value("${spring.data.redis.port}")
     private Integer redisPort;
 
-//    {
-//        @code
-//        RedisClient client = RedisClient.builder().host("localhost").port(6379).build();
-//    }
+//    @Value("${spring.data.redis.ssl.enabled}")
+//    private boolean redisSslEnabled;
 
     @Bean(name = "customVectorStore")
     public VectorStore redisVectorStore(RedisClient redisClient, EmbeddingModel embeddingModel) {
