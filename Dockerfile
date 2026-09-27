@@ -1,5 +1,5 @@
 # Build stage
-FROM eclipse-temurin:17-jdk AS builder
+FROM openjdk:17.0.1-jdk AS builder
 WORKDIR /app
 
 # Copy Maven wrapper and POM configuration first (for layer caching)
@@ -20,12 +20,14 @@ COPY src src
 RUN ./mvnw package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:17-jre
+FROM openjdk:17.0.1-jdk
 
 WORKDIR /app
 
+COPY data data
 COPY --from=builder /app/target/vcorp-ai-backend-0.0.1-SNAPSHOT.jar app.jar
+
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:-UseContainerSupport", "-jar", "app.jar"]
